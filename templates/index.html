@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JavaGoat HR</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root{
+      --violet:#7C3AED;
+      --indigo:#4F46E5;
+      --bg:#F6F7FB;
+      --card:#FFFFFF;
+      --text:#111827;
+      --muted:#6B7280;
+      --line:#E5E7EB;
+      --danger:#EF4444;
+      --success:#10B981;
+      --warning:#F59E0B;
+      --cyan:#06B6D4;
+      --pink:#EC4899;
+      --shadow:0 20px 45px rgba(17,24,39,.08);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,sans-serif;
+      min-height:100vh;
+    }
+    h1,h2,h3,.brand{font-family:Sora,Inter,sans-serif}
+    code,.mono{font-family:"JetBrains Mono",monospace}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer;border:0}
+    a{text-decoration:none;color:inherit}
+    .hidden{display:none!important}
+
+    .login{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      background:#fff;
+    }
+    .login-art{
+      background:
+        radial-gradient(circle at 20% 20%,rgba(255,255,255,.24),transparent 24%),
+        radial-gradient(circle at 70% 70%,rgba(255,255,255,.16),transparent 26%),
+        linear-gradient(135deg,var(--violet),var(--indigo));
+      color:#fff;
+      padding:64px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+      position:relative;
+    }
+    .goat-mark{
+      width:68px;height:68px;border-radius:24px;
+      background:rgba(255,255,255,.16);
+      display:grid;place-items:center;
+      backdrop-filter:blur(10px);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);
+    }
+    .login-art h1{font-size:56px;line-height:1.02;margin:28px 0 18px}
+    .login-art p{font-size:18px;line-height:1.7;opacity:.9;max-width:620px}
+    .orb{position:absolute;border-radius:999px;background:rgba(255,255,255,.12);filter:blur(1px)}
+    .orb.a{width:240px;height:240px;right:-60px;top:80px}
+    .orb.b{width:320px;height:320px;left:-80px;bottom:-110px}
+    .glass{
+      margin-top:48px;
+      width:min(560px,100%);
+      border-radius:28px;
+      padding:26px;
+      background:rgba(255,255,255,.13);
+      border:1px solid rgba(255,255,255,.22);
+      backdrop-filter:blur(12px);
+    }
+    .login-form-wrap{
+      display:grid;
+      place-items:center;
+      padding:40px;
+    }
+    .login-card{
+      width:min(460px,100%);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:32px;
+      padding:38px;
+      box-shadow:var(--shadow);
+    }
+    .login-card h2{font-size:32px;margin:0 0 8px}
+    .login-card p{color:var(--muted);margin:0 0 28px}
+    .field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    label{font-weight:700;font-size:13px;color:#374151}
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:#fff;
+      outline:none;
+      transition:.18s;
+    }
+    textarea{min-height:92px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      border-color:#8B5CF6;
+      box-shadow:0 0 0 4px rgba(124,58,237,.12);
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border-radius:14px;
+      padding:12px 15px;
+      font-weight:800;
+      color:#fff;
+      background:linear-gradient(135deg,var(--violet),var(--indigo));
+      box-shadow:0 10px 20px rgba(79,70,229,.18);
+    }
+    .btn.full{width:100%}
+    .btn.light{
+      color:#4B5563;
+      background:#fff;
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn.danger{background:linear-gradient(135deg,#FB7185,#EF4444)}
+    .btn.small{padding:9px 11px;border-radius:12px;font-size:13px}
+    .error{color:#DC2626;font-weight:700;font-size:13px;margin-top:12px}
+
+    .app{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:280px 1fr;
+    }
+    .sidebar{
+      background:linear-gradient(180deg,var(--violet),var(--indigo));
+      color:#fff;
+      padding:24px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+    .side-brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:30px;
+    }
+    .side-logo{
+      width:48px;height:48px;border-radius:17px;
+      background:rgba(255,255,255,.16);
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.22);
+    }
+    .side-brand strong{font-family:Sora;font-size:21px}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav button{
+      color:rgba(255,255,255,.86);
+      background:transparent;
+      border-radius:16px;
+      padding:13px 14px;
+      display:flex;
+      align-items:center;
+      gap:11px;
+      font-weight:800;
+      text-align:left;
+    }
+    .nav button.active,.nav button:hover{
+      color:#fff;
+      background:rgba(255,255,255,.16);
+    }
+    .side-bottom{
+      margin-top:32px;
+      padding-top:22px;
+      border-top:1px solid rgba(255,255,255,.18);
+    }
+    .main{padding:28px;overflow:hidden}
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+      margin-bottom:24px;
+    }
+    .topbar h1{font-size:30px;margin:0}
+    .topbar p{margin:6px 0 0;color:var(--muted)}
+    .user-pill{
+      display:flex;align-items:center;gap:10px;
+      background:#fff;border:1px solid var(--line);
+      padding:9px 12px;border-radius:999px;
+      box-shadow:0 10px 25px rgba(17,24,39,.04);
+    }
+    .avatar{
+      width:38px;height:38px;border-radius:999px;
+      object-fit:cover;background:#EDE9FE;
+      border:2px solid #fff;
+      box-shadow:0 4px 12px rgba(79,70,229,.13);
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:16px;
+      margin-bottom:16px;
+    }
+    .stat{
+      color:#fff;border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      min-height:132px;
+      position:relative;
+      overflow:hidden;
+    }
+    .stat:after{
+      content:"";
+      width:120px;height:120px;border-radius:999px;
+      position:absolute;right:-42px;top:-38px;
+      background:rgba(255,255,255,.16);
+    }
+    .stat .icon{
+      width:42px;height:42px;border-radius:15px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.18);
+      margin-bottom:14px;
+    }
+    .stat h3{font-size:29px;margin:0 0 4px}
+    .stat span{opacity:.9;font-weight:700}
+    .g-blue{background:linear-gradient(135deg,#3B82F6,#2563EB)}
+    .g-green{background:linear-gradient(135deg,#34D399,#059669)}
+    .g-orange{background:linear-gradient(135deg,#FBBF24,#F97316)}
+    .g-pink{background:linear-gradient(135deg,#F472B6,#DB2777)}
+    .g-cyan{background:linear-gradient(135deg,#22D3EE,#0891B2)}
+
+    .grid-3{display:grid;grid-template-columns:1.25fr .9fr 1fr;gap:16px;margin-bottom:16px}
+    .grid-2{display:grid;grid-template-columns:1.35fr .85fr;gap:16px}
+    .panel,.section-card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .panel{padding:20px;min-height:350px}
+    .panel-head{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:14px;
+    }
+    .panel h3{margin:0;font-size:17px}
+    .chart-wrap{height:275px}
+    .scroll-list{max-height:286px;overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:5px}
+    .emp-row{
+      display:flex;align-items:center;gap:11px;
+      padding:10px;border-radius:16px;background:#F9FAFB;
+    }
+    .emp-row strong{font-size:14px}
+    .emp-row small{color:var(--muted)}
+    .pill{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:5px 9px;border-radius:999px;
+      font-size:12px;font-weight:900;
+      background:#EDE9FE;color:#5B21B6;
+      white-space:nowrap;
+    }
+
+    .section-card{padding:18px}
+    .toolbar{
+      display:grid;
+      grid-template-columns:1fr 210px 210px auto;
+      gap:12px;
+      align-items:center;
+      margin-bottom:16px;
+    }
+    .table-wrap{overflow:auto}
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width:900px;
+    }
+    th,td{
+      padding:13px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      vertical-align:middle;
+      font-size:14px;
+    }
+    th{
+      color:#4B5563;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      background:#FAFAFC;
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+    tr:hover td{background:#FCFCFF}
+    .actions{display:flex;gap:7px}
+    .icon-btn{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      color:#4B5563;background:#F3F4F6;
+    }
+    .icon-btn:hover{background:#EDE9FE;color:#5B21B6}
+    .icon-btn.del:hover{background:#FEE2E2;color:#DC2626}
+    .empty{
+      padding:34px;
+      text-align:center;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .modal-backdrop{
+      position:fixed;inset:0;
+      background:rgba(17,24,39,.58);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      padding:24px;
+    }
+    .modal-backdrop.show{display:flex}
+    .modal{
+      width:min(780px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#fff;
+      border-radius:28px;
+      box-shadow:0 30px 90px rgba(17,24,39,.25);
+      border:1px solid rgba(255,255,255,.4);
+    }
+    .modal-head{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:22px 24px;
+      border-bottom:1px solid var(--line);
+    }
+    .modal-head h3{font-family:Sora;margin:0}
+    .modal-body{padding:24px}
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+    .form-grid .wide{grid-column:1/-1}
+    .modal-foot{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      padding:18px 24px;
+      border-top:1px solid var(--line);
+      background:#FAFAFC;
+    }
+    .preview-img{
+      width:74px;height:74px;border-radius:22px;
+      object-fit:cover;
+      border:1px solid var(--line);
+      background:#F3F4F6;
+    }
+    .assigned-list{display:flex;flex-wrap:wrap;gap:6px;max-width:360px}
+
+    @media(max-width:1180px){
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .grid-3,.grid-2{grid-template-columns:1fr}
+      .app{grid-template-columns:88px 1fr}
+      .sidebar{padding:18px}
+      .side-brand strong,.nav span,.side-bottom .logout-text{display:none}
+      .nav button{justify-content:center}
+      .toolbar{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:720px){
+      .login{grid-template-columns:1fr}
+      .login-art{display:none}
+      .app{grid-template-columns:1fr}
+      .sidebar{height:auto;position:relative}
+      .nav{flex-direction:row;overflow:auto}
+      .nav button{min-width:54px}
+      .main{padding:18px}
+      .stats{grid-template-columns:1fr}
+      .toolbar{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loginView" class="login hidden">
+    <div class="login-art">
+      <div>
+        <div class="goat-mark"><i data-lucide="badge-check"></i></div>
+        <h1>JavaGoat HR</h1>
+        <p>A vibrant, modern employee management cockpit for people operations, attendance, hiring, leaves and payroll.</p>
+        <div class="glass">
+          <strong>Demo credentials</strong>
+          <p class="mono" style="margin:10px 0 0">admin@javagoat.hr / password123</p>
+        </div>
+      </div>
+      <div>
+        <p style="margin:0;opacity:.82">Built with Flask, Supabase, Chart.js and Lucide Icons.</p>
+      </div>
+      <div class="orb a"></div>
+      <div class="orb b"></div>
+    </div>
+
+    <div class="login-form-wrap">
+      <form id="loginForm" class="login-card">
+        <h2>Welcome back</h2>
+        <p>Sign in to manage JavaGoat HR.</p>
+        <div class="field">
+          <label>Email</label>
+          <input id="loginEmail" type="email" value="admin@javagoat.hr" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" value="password123" autocomplete="current-password" required>
+        </div>
+        <button class="btn full" type="submit"><i data-lucide="log-in"></i> Sign In</button>
+        <div id="loginError" class="error hidden"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div class="side-logo"><i data-lucide="badge-check"></i></div>
+        <strong>JavaGoat HR</strong>
+      </div>
+      <nav id="nav" class="nav"></nav>
+      <div class="side-bottom">
+        <button id="logoutBtn" class="btn light full" style="color:#4F46E5">
+          <i data-lucide="log-out"></i><span class="logout-text">Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">People insights and operations overview.</p>
+        </div>
+        <div class="user-pill">
+          <img class="avatar" alt="Admin" src="https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=6D28D9&textColor=ffffff">
+          <div>
+            <strong>Admin</strong><br>
+            <small class="mono">admin@javagoat.hr</small>
+          </div>
+        </div>
+      </div>
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="icon-btn" onclick="closeModal()"><i data-lucide="x"></i></button>
+      </div>
+      <form id="modalForm">
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-foot">
+          <button type="button" class="btn light" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn"><i data-lucide="save"></i> Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+const API = "";
+const DEFAULT_AVATAR = "https://api.dicebear.com/7.x/initials/svg?backgroundColor=6D28D9&textColor=ffffff";
+const tokenKey = "javagoat_token";
+
+let route = "dashboard";
+let cache = {
+  departments: [],
+  positions: [],
+  employees: [],
+  attendance: [],
+  leaves: [],
+  payroll: []
+};
+let charts = {};
+let modalState = { entity:null, mode:null, record:null, special:null };
+
+const sections = [
+  ["dashboard","Dashboard","layout-dashboard"],
+  ["employees","Employees","users"],
+  ["departments","Departments","building-2"],
+  ["positions","Positions","briefcase-business"],
+  ["attendance","Attendance","calendar-check"],
+  ["leaves","Leaves","plane"],
+  ["payroll","Payroll","wallet-cards"]
+];
+
+const entityConfig = {
+  departments: {
+    title:"Departments",
+    endpoint:"/api/departments",
+    filters:[["status","Status"],["name","Department"]],
+    columns:[
+      ["name","Name"],["description","Description"],["status","Status"],["created_at","Created"]
+    ],
+    fields:[
+      {name:"name",label:"Name",type:"text",required:true},
+      {name:"description",label:"Description",type:"textarea",wide:true},
+      {name:"status",label:"Status",type:"select",options:["Active","Inactive"],required:true}
+    ]
+  },
+  positions: {
+    title:"Positions",
+    endpoint:"/api/positions",
+    filters:[["department_id","Department"],["status","Status"]],
+    columns:[
+      ["title","Title"],["department_id","Department"],["level","Level"],["status","Status"],["assigned","Assigned Employees"]
+    ],
+    fields:[
+      {name:"title",label:"Title",type:"text",required:true},
+      {name:"department_id",label:"Department",type:"select",source:"departments"},
+      {name:"level",label:"Level",type:"select",options:["Intern","Junior","Mid","Senior","Lead","Manager","Director"]},
+      {name:"status",label:"Status",type:"select",options:["Open","Filled","Inactive"],required:true},
+      {name:"description",label:"Description",type:"textarea",wide:true}
+    ]
+  },
+  employees: {
+    title:"Employees",
+    endpoint:"/api/employees",
+    filters:[["status","Status"],["department_id","Department"]],
+    columns:[
+      ["profile_pic","Photo"],["name","Name"],["email","Email"],["department_id","Department"],["position_id","Position"],["salary","Salary"],["status","Status"],["hire_date","Hire Date"]
+    ],
+    fields:[
+      {name:"profile_pic",label:"Profile Picture",type:"file",wide:true},
+      {name:"name",label:"Full Name",type:"text",required:true},
+      {name:"email",label:"Email",type:"email",required:true},
+      {name:"phone",label:"Phone",type:"text"},
+      {name:"department_id",label:"Department",type:"select",source:"departments"},
+      {name:"position_id",label:"Position",type:"select",source:"positions"},
+      {name:"salary",label:"Salary",type:"number",step:"0.01"},
+      {name:"status",label:"Status",type:"select",options:["Active","Inactive","On Leave","Terminated"],required:true},
+      {name:"hire_date",label:"Hire Date",type:"date"}
+    ]
+  },
+  attendance: {
+    title:"Attendance",
+    endpoint:"/api/attendance",
+    filters:[["status","Status"],["employee_id","Employee"]],
+    columns:[
+      ["employee_id","Employee"],["date","Date"],["check_in","Check In"],["check_out","Check Out"],["status","Status"],["notes","Notes"]
+    ],
+    fields:[
+      {name:"employee_id",label:"Employee",type:"select",source:"employees",required:true},
+      {name:"date",label:"Date",type:"date",required:true},
+      {name:"check_in",label:"Check In",type:"time"},
+      {name:"check_out",label:"Check Out",type:"time"},
+      {name:"status",label:"Status",type:"select",options:["Present","Absent","Late","Remote","Half Day"],required:true},
+      {name:"notes",label:"Notes",type:"textarea",wide:true}
+    ]
+  },
+  leaves: {
+    title:"Leaves",
+    endpoint:"/api/leaves",
+    filters:[["status","Status"],["employee_id","Employee"]],
+    columns:[
+      ["employee_id","Employee"],["leave_type","Type"],["start_date","Start"],["end_date","End"],["status","Status"],["reason","Reason"]
+    ],
+    fields:[
+      {name:"employee_id",label:"Employee",type:"select",source:"employees",required:true},
+      {name:"leave_type",label:"Leave Type",type:"select",options:["Annual","Sick","Casual","Maternity","Paternity","Unpaid"],required:true},
+      {name:"start_date",label:"Start Date",type:"date",required:true},
+      {name:"end_date",label:"End Date",type:"date",required:true},
+      {name:"status",label:"Status",type:"select",options:["Pending","Approved","Rejected"],required:true},
+      {name:"reason",label:"Reason",type:"textarea",wide:true}
+    ]
+  },
+  payroll: {
+    title:"Payroll",
+    endpoint:"/api/payroll",
+    filters:[["status","Status"],["employee_id","Employee"]],
+    columns:[
+      ["employee_id","Employee"],["pay_period","Period"],["basic_salary","Basic"],["bonus","Bonus"],["deductions","Deductions"],["net_pay","Net Pay"],["status","Status"]
+    ],
+    fields:[
+      {name:"employee_id",label:"Employee",type:"select",source:"employees",required:true},
+      {name:"pay_period",label:"Pay Period",type:"month",required:true},
+      {name:"basic_salary",label:"Basic Salary",type:"number",step:"0.01",required:true},
+      {name:"bonus",label:"Bonus",type:"number",step:"0.01"},
+      {name:"deductions",label:"Deductions",type:"number",step:"0.01"},
+      {name:"status",label:"Status",type:"select",options:["Draft","Generated","Paid"],required:true},
+      {name:"notes",label:"Notes",type:"textarea",wide:true}
+    ]
+  }
+};
+
+function $(id){ return document.getElementById(id); }
+function fmtMoney(v){ return "$" + Number(v || 0).toLocaleString(undefined,{maximumFractionDigits:2}); }
+function isoDate(){ return new Date().toISOString().slice(0,10); }
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function apiHeaders(){ return {"Content-Type":"application/json","Authorization":"Bearer "+localStorage.getItem(tokenKey)}; }
+async function request(path, opts={}){
+  const res = await fetch(API + path, {...opts, headers:{...apiHeaders(), ...(opts.headers || {})}});
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+function nameBy(arr,id,field="name"){
+  const item = arr.find(x => String(x.id) === String(id));
+  return item ? item[field] : "";
+}
+function employeeName(id){ return nameBy(cache.employees,id,"name"); }
+function positionTitle(id){ return nameBy(cache.positions,id,"title"); }
+function departmentName(id){ return nameBy(cache.departments,id,"name"); }
+
+function showLogin(){
+  $("loginView").classList.remove("hidden");
+  $("appView").classList.add("hidden");
+  lucide.createIcons();
+}
+function showApp(){
+  $("loginView").classList.add("hidden");
+  $("appView").classList.remove("hidden");
+  renderNav();
+  navigate(location.hash.replace("#","") || "dashboard");
+  lucide.createIcons();
+}
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("loginError").classList.add("hidden");
+  try{
+    const data = await request("/api/login", {
+      method:"POST",
+      body:JSON.stringify({email:$("loginEmail").value,password:$("loginPassword").value})
+    });
+    localStorage.setItem(tokenKey, data.token);
+    showApp();
+  }catch(err){
+    $("loginError").textContent = err.message;
+    $("loginError").classList.remove("hidden");
+  }
+});
+$("logoutBtn").addEventListener("click", () => {
+  localStorage.removeItem(tokenKey);
+  location.hash = "";
+  showLogin();
+});
+
+function renderNav(){
+  $("nav").innerHTML = sections.map(([key,label,icon]) => `
+    <button class="${route===key?'active':''}" onclick="navigate('${key}')">
+      <i data-lucide="${icon}"></i><span>${label}</span>
+    </button>
+  `).join("");
+  lucide.createIcons();
+}
+async function navigate(key){
+  route = key || "dashboard";
+  location.hash = route;
+  renderNav();
+  $("pageTitle").textContent = sections.find(s=>s[0]===route)?.[1] || "Dashboard";
+  $("pageSubtitle").textContent = route === "dashboard"
+    ? "People insights and operations overview."
+    : `Manage ${$("pageTitle").textContent.toLowerCase()} records, filters and actions.`;
+  if(route === "dashboard") await renderDashboard();
+  else await renderSection(route);
+  lucide.createIcons();
+}
+window.addEventListener("hashchange", () => {
+  const r = location.hash.replace("#","");
+  if(r && r !== route) navigate(r);
+});
+
+async function loadBase(){
+  const [departments, positions, employees] = await Promise.all([
+    request("/api/departments"),
+    request("/api/positions"),
+    request("/api/employees")
+  ]);
+  cache.departments = departments;
+  cache.positions = positions;
+  cache.employees = employees;
+}
+async function loadEntity(entity){
+  if(["employees","departments","positions"].includes(entity)){
+    await loadBase();
+  }else{
+    await loadBase();
+    cache[entity] = await request(entityConfig[entity].endpoint);
+  }
+}
+
+async function renderDashboard(){
+  await loadBase();
+  const stats = await request("/api/dashboard/stats");
+  $("content").innerHTML = `
+    <div class="stats">
+      ${statCard("Users", stats.cards.employees, "Employees", "g-blue")}
+      ${statCard("Building2", stats.cards.departments, "Departments", "g-green")}
+      ${statCard("BriefcaseBusiness", stats.cards.positions, "Positions", "g-orange")}
+      ${statCard("CalendarCheck", stats.cards.present_today, "Present Today", "g-pink")}
+      ${statCard("WalletCards", fmtMoney(stats.cards.payroll_month), "Payroll Month", "g-cyan")}
+    </div>
+
+    <div class="grid-3">
+      <div class="panel">
+        <div class="panel-head"><h3>Hiring Trend</h3><span class="pill">Monthly</span></div>
+        <div class="chart-wrap"><canvas id="hiringChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Department Mix</h3><span class="pill">Headcount</span></div>
+        <div class="chart-wrap"><canvas id="deptChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Employees by Position</h3><span class="pill">Live</span></div>
+        <div class="scroll-list">
+          ${(stats.employees_by_position || []).map(e => `
+            <div class="emp-row">
+              <img class="avatar" src="${esc(e.profile_pic || DEFAULT_AVATAR + "&seed=" + encodeURIComponent(e.name || "JG"))}" alt="">
+              <div style="flex:1">
+                <strong>${esc(e.name)}</strong><br>
+                <small>${esc(e.department || "No department")}</small>
+              </div>
+              <span class="pill" style="background:${pillBg(e.position)};color:${pillColor(e.position)}">${esc(e.position || "Unassigned")}</span>
+            </div>
+          `).join("") || `<div class="empty">No employees yet.</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-head"><h3>Attendance Trend</h3><span class="pill">Present count</span></div>
+        <div class="chart-wrap"><canvas id="attendanceChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Status Breakdown</h3><span class="pill">Employees</span></div>
+        <div class="chart-wrap"><canvas id="statusChart"></canvas></div>
+      </div>
+    </div>
+  `;
+  renderCharts(stats);
+}
+function statCard(icon, value, label, cls){
+  return `
+    <div class="stat ${cls}">
+      <div class="icon"><i data-lucide="${icon}"></i></div>
+      <h3>${esc(value)}</h3>
+      <span>${esc(label)}</span>
+    </div>
+  `;
+}
+function chartColors(){
+  return ["#7C3AED","#06B6D4","#10B981","#F59E0B","#EC4899","#EF4444","#3B82F6","#84CC16","#F97316","#14B8A6"];
+}
+function destroyCharts(){
+  Object.values(charts).forEach(c => c && c.destroy());
+  charts = {};
+}
+function renderCharts(stats){
+  destroyCharts();
+  const colors = chartColors();
+  charts.hiring = new Chart($("hiringChart"), {
+    type:"bar",
+    data:{labels:stats.hiring_trend.labels,datasets:[{label:"Hires",data:stats.hiring_trend.data,backgroundColor:"#7C3AED",borderRadius:10}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+  });
+  charts.dept = new Chart($("deptChart"), {
+    type:"doughnut",
+    data:{labels:stats.department_mix.labels,datasets:[{data:stats.department_mix.data,backgroundColor:colors,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
+  });
+  charts.attendance = new Chart($("attendanceChart"), {
+    type:"line",
+    data:{labels:stats.attendance_trend.labels,datasets:[{label:"Present",data:stats.attendance_trend.data,borderColor:"#4F46E5",backgroundColor:"rgba(79,70,229,.12)",fill:true,tension:.35,pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+  });
+  charts.status = new Chart($("statusChart"), {
+    type:"doughnut",
+    data:{labels:stats.status_breakdown.labels,datasets:[{data:stats.status_breakdown.data,backgroundColor:["#10B981","#F59E0B","#8B5CF6","#EF4444","#06B6D4"],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}
+  });
+  lucide.createIcons();
+}
+
+async function renderSection(entity){
+  await loadEntity(entity);
+  const cfg = entityConfig[entity];
+  $("content").innerHTML = `
+    <div class="section-card">
+      <div class="toolbar">
+        <input id="searchInput" placeholder="Search ${cfg.title.toLowerCase()}...">
+        <select id="filterOne"><option value="">All ${cfg.filters[0]?.[1] || "Filters"}</option></select>
+        <select id="filterTwo"><option value="">All ${cfg.filters[1]?.[1] || "Filters"}</option></select>
+        <button class="btn" onclick="openCrudModal('${entity}','add')"><i data-lucide="plus"></i> Add ${cfg.title.slice(0,-1)}</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              ${cfg.columns.map(c => `<th>${esc(c[1])}</th>`).join("")}
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  hydrateFilters(entity);
+  $("searchInput").addEventListener("input", () => renderRows(entity));
+  $("filterOne").addEventListener("change", () => renderRows(entity));
+  $("filterTwo").addEventListener("change", () => renderRows(entity));
+  renderRows(entity);
+}
+function hydrateFilters(entity){
+  const cfg = entityConfig[entity];
+  [0,1].forEach(i => {
+    const el = $(i===0 ? "filterOne" : "filterTwo");
+    const f = cfg.filters[i];
+    if(!f){ el.parentElement && (el.style.display="none"); return; }
+    el.innerHTML = `<option value="">All ${f[1]}</option>` + filterOptions(f[0]);
+  });
+}
+function filterOptions(field){
+  if(field === "department_id") return cache.departments.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+  if(field === "position_id") return cache.positions.map(x=>`<option value="${x.id}">${esc(x.title)}</option>`).join("");
+  if(field === "employee_id") return cache.employees.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+  if(field === "status") return ["Active","Inactive","On Leave","Terminated","Open","Filled","Present","Absent","Late","Remote","Half Day","Pending","Approved","Rejected","Draft","Generated","Paid"]
+    .map(x=>`<option value="${x}">${x}</option>`).join("");
+  if(field === "name") return cache.departments.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join("");
+  return "";
+}
+function filteredData(entity){
+  const cfg = entityConfig[entity];
+  const q = $("searchInput")?.value?.toLowerCase() || "";
+  const f1 = $("filterOne")?.value || "";
+  const f2 = $("filterTwo")?.value || "";
+  const ff1 = cfg.filters[0]?.[0];
+  const ff2 = cfg.filters[1]?.[0];
+  return (cache[entity] || []).filter(row => {
+    const text = JSON.stringify(row).toLowerCase()
+      + " " + employeeName(row.employee_id).toLowerCase()
+      + " " + departmentName(row.department_id).toLowerCase()
+      + " " + positionTitle(row.position_id).toLowerCase();
+    return (!q || text.includes(q))
+      && (!f1 || String(row[ff1] || "") === String(f1))
+      && (!f2 || String(row[ff2] || "") === String(f2));
+  });
+}
+function renderRows(entity){
+  const cfg = entityConfig[entity];
+  const rows = filteredData(entity);
+  $("tableBody").innerHTML = rows.map(row => `
+    <tr>
+      ${cfg.columns.map(c => `<td>${cell(entity,row,c[0])}</td>`).join("")}
+      <td>
+        <div class="actions">
+          ${entity === "positions" ? `<button class="icon-btn" title="Assign Employee" onclick="openAssignModal(${row.id})"><i data-lucide="user-plus"></i></button>` : ""}
+          <button class="icon-btn" title="Edit" onclick="openCrudModal('${entity}','edit',${row.id})"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete" onclick="deleteRecord('${entity}',${row.id})"><i data-lucide="trash-2"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join("") || `<tr><td colspan="${cfg.columns.length+1}"><div class="empty">No records found.</div></td></tr>`;
+  lucide.createIcons();
+}
+function cell(entity,row,field){
+  if(field === "profile_pic"){
+    return `<img class="avatar" src="${esc(row.profile_pic || DEFAULT_AVATAR + "&seed=" + encodeURIComponent(row.name || "Employee"))}" alt="">`;
+  }
+  if(field === "department_id") return `<span class="pill">${esc(departmentName(row.department_id) || "—")}</span>`;
+  if(field === "position_id") return `<span class="pill" style="background:${pillBg(positionTitle(row.position_id))};color:${pillColor(positionTitle(row.position_id))}">${esc(positionTitle(row.position_id) || "—")}</span>`;
+  if(field === "employee_id") return esc(employeeName(row.employee_id) || "—");
+  if(field === "salary" || field === "basic_salary" || field === "bonus" || field === "deductions" || field === "net_pay") return fmtMoney(row[field]);
+  if(field === "status") return `<span class="pill">${esc(row.status || "—")}</span>`;
+  if(field === "assigned"){
+    const assigned = cache.employees.filter(e => String(e.position_id) === String(row.id));
+    return `<div class="assigned-list">${assigned.map(e=>`<span class="pill">${esc(e.name)}</span>`).join("") || "—"}</div>`;
+  }
+  if(field === "created_at") return row.created_at ? new Date(row.created_at).toLocaleDateString() : "—";
+  return esc(row[field] || "—");
+}
+function pillBg(seed){
+  const colors = ["#EDE9FE","#DBEAFE","#D1FAE5","#FEF3C7","#FCE7F3","#CFFAFE","#FFEDD5"];
+  return colors[Math.abs(hash(seed || "")) % colors.length];
+}
+function pillColor(seed){
+  const colors = ["#5B21B6","#1D4ED8","#047857","#B45309","#BE185D","#0E7490","#C2410C"];
+  return colors[Math.abs(hash(seed || "")) % colors.length];
+}
+function hash(s){ return [...String(s)].reduce((a,c)=>((a<<5)-a+c.charCodeAt(0))|0,0); }
+
+function openCrudModal(entity, mode, id=null){
+  const cfg = entityConfig[entity];
+  const record = id ? cache[entity].find(x => Number(x.id) === Number(id)) : {};
+  modalState = {entity, mode, record, special:null};
+  $("modalTitle").textContent = `${mode === "add" ? "Add" : "Edit"} ${cfg.title.slice(0,-1)}`;
+  $("modalBody").innerHTML = `<div class="form-grid">${cfg.fields.map(f => fieldHtml(f, record)).join("")}</div>`;
+  $("modalBackdrop").classList.add("show");
+  setupModalHooks(entity, record);
+  lucide.createIcons();
+}
+function fieldHtml(f, record={}){
+  const val = record?.[f.name] ?? "";
+  const req = f.required ? "required" : "";
+  const wide = f.wide ? "wide" : "";
+  if(f.type === "textarea"){
+    return `<div class="field ${wide}"><label>${f.label}</label><textarea name="${f.name}" ${req}>${esc(val)}</textarea></div>`;
+  }
+  if(f.type === "select"){
+    return `<div class="field ${wide}"><label>${f.label}</label><select name="${f.name}" ${req}>${selectOptions(f,val)}</select></div>`;
+  }
+  if(f.type === "file"){
+    const src = val || DEFAULT_AVATAR + "&seed=" + encodeURIComponent(record.name || "Employee");
+    return `
+      <div class="field ${wide}">
+        <label>${f.label}</label>
+        <div style="display:flex;align-items:center;gap:14px">
+          <img id="profilePreview" class="preview-img" src="${esc(src)}" alt="">
+          <input name="${f.name}" type="file" accept="image/*">
+          <input id="profilePicBase64" type="hidden" value="${esc(val)}">
+        </div>
+      </div>
+    `;
+  }
+  return `<div class="field ${wide}"><label>${f.label}</label><input name="${f.name}" type="${f.type}" step="${f.step || ""}" value="${esc(val)}" ${req}></div>`;
+}
+function selectOptions(f, val){
+  let opts = [`<option value="">Select ${esc(f.label)}</option>`];
+  if(f.source === "departments") opts.push(...cache.departments.map(x=>`<option value="${x.id}" ${String(val)===String(x.id)?"selected":""}>${esc(x.name)}</option>`));
+  else if(f.source === "positions") opts.push(...cache.positions.map(x=>`<option value="${x.id}" ${String(val)===String(x.id)?"selected":""}>${esc(x.title)}</option>`));
+  else if(f.source === "employees") opts.push(...cache.employees.map(x=>`<option value="${x.id}" ${String(val)===String(x.id)?"selected":""}>${esc(x.name)}</option>`));
+  else opts.push(...(f.options || []).map(x=>`<option value="${x}" ${String(val)===String(x)?"selected":""}>${x}</option>`));
+  return opts.join("");
+}
+function setupModalHooks(entity, record){
+  const file = document.querySelector('input[type="file"][name="profile_pic"]');
+  if(file){
+    file.addEventListener("change", async e => {
+      const img = e.target.files[0];
+      if(!img) return;
+      const base64 = await resizeImage(img, 200, 200);
+      $("profilePicBase64").value = base64;
+      $("profilePreview").src = base64;
+    });
+  }
+  if(entity === "payroll"){
+    const empSel = document.querySelector('select[name="employee_id"]');
+    const salary = document.querySelector('input[name="basic_salary"]');
+    const bonus = document.querySelector('input[name="bonus"]');
+    const deductions = document.querySelector('input[name="deductions"]');
+    const recompute = () => {};
+    if(empSel){
+      empSel.addEventListener("change", async () => {
+        if(!empSel.value) return;
+        const emp = await request(`/api/employees/${empSel.value}`);
+        salary.value = emp.salary || 0;
+      });
+    }
+    [salary,bonus,deductions].forEach(i => i && i.addEventListener("input", recompute));
+  }
+}
+function closeModal(){
+  $("modalBackdrop").classList.remove("show");
+  $("modalForm").reset();
+}
+$("modalForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const {entity, mode, record, special} = modalState;
+  if(special === "assign") return submitAssign();
+  const form = new FormData(e.target);
+  const payload = {};
+  for(const [k,v] of form.entries()){
+    if(k === "profile_pic") continue;
+    payload[k] = v === "" ? null : v;
+  }
+  if(entity === "employees"){
+    payload.profile_pic = $("profilePicBase64")?.value || null;
+    if(!payload.profile_pic && payload.name) payload.profile_pic = DEFAULT_AVATAR + "&seed=" + encodeURIComponent(payload.name);
+  }
+  if(entity === "payroll"){
+    const basic = Number(payload.basic_salary || 0);
+    const bonus = Number(payload.bonus || 0);
+    const deductions = Number(payload.deductions || 0);
+    payload.net_pay = basic + bonus - deductions;
+  }
+  ["salary","basic_salary","bonus","deductions","net_pay"].forEach(k => {
+    if(k in payload && payload[k] !== null) payload[k] = Number(payload[k] || 0);
+  });
+  ["department_id","position_id","employee_id"].forEach(k => {
+    if(k in payload && payload[k] !== null) payload[k] = Number(payload[k]);
+  });
+  const cfg = entityConfig[entity];
+  if(mode === "add") await request(cfg.endpoint,{method:"POST",body:JSON.stringify(payload)});
+  else await request(`${cfg.endpoint}/${record.id}`,{method:"PUT",body:JSON.stringify(payload)});
+  closeModal();
+  await renderSection(entity);
+});
+
+async function resizeImage(file, maxW, maxH){
+  return new Promise((resolve,reject)=>{
+    const img = new Image();
+    img.onload = () => {
+      let {width,height} = img;
+      const ratio = Math.min(maxW/width, maxH/height, 1);
+      width = Math.round(width * ratio);
+      height = Math.round(height * ratio);
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img,0,0,width,height);
+      resolve(canvas.toDataURL("image/jpeg", .86));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function deleteRecord(entity,id){
+  if(!confirm("Delete this record? This action cannot be undone.")) return;
+  await request(`${entityConfig[entity].endpoint}/${id}`,{method:"DELETE"});
+  await renderSection(entity);
+}
+
+async function openAssignModal(positionId){
+  await loadBase();
+  const pos = cache.positions.find(p => Number(p.id) === Number(positionId));
+  modalState = {entity:"positions", mode:"assign", record:pos, special:"assign"};
+  $("modalTitle").textContent = `Assign Employee to ${pos?.title || "Position"}`;
+  $("modalBody").innerHTML = `
+    <div class="form-grid">
+      <div class="field wide">
+        <label>Employee</label>
+        <select name="employee_id" required>
+          <option value="">Select employee</option>
+          ${cache.employees.map(e => `<option value="${e.id}">${esc(e.name)} ${e.position_id ? "(currently: "+esc(positionTitle(e.position_id))+")" : ""}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field wide">
+        <label>Position</label>
+        <input value="${esc(pos?.title || "")}" disabled>
+      </div>
+    </div>
+  `;
+  $("modalBackdrop").classList.add("show");
+  lucide.createIcons();
+}
+async function submitAssign(){
+  const employeeId = document.querySelector('select[name="employee_id"]').value;
+  if(!employeeId) return;
+  await request(`/api/employees/${employeeId}`, {
+    method:"PUT",
+    body:JSON.stringify({position_id: modalState.record.id, department_id: modalState.record.department_id || null})
+  });
+  closeModal();
+  await renderSection("positions");
+}
+
+if(localStorage.getItem(tokenKey)) showApp(); else showLogin();
+</script>
+</body>
+</html>
